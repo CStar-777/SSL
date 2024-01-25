@@ -1,0 +1,32 @@
+{
+    "os": "Linux-5.4.0-90-generic-x86_64-with-debian-buster-sid",
+    "python": "3.6.13",
+    "heartbeatAt": "2022-01-21T13:48:20.037947",
+    "startedAt": "2022-01-21T13:48:18.000300",
+    "docker": null,
+    "gpu": "GeForce GTX 1080 Ti",
+    "gpu_count": 4,
+    "cpu_count": 32,
+    "cuda": "10.1.243",
+    "args": [
+        "--local_rank=0",
+        "configs/soft_teacher/soft_teacher_faster_rcnn_r50_caffe_fpn_coco_180k.py",
+        "--launcher",
+        "pytorch",
+        "--cfg-options",
+        "fold=1",
+        "percent=10"
+    ],
+    "state": "running",
+    "program": "tools/train.py",
+    "codePath": "tools/train.py",
+    "git": {
+        "remote": "git://github.com/microsoft/SoftTeacher.git",
+        "commit": "bef9a256e5c920723280146fc66b82629b3ee9d4"
+    },
+    "email": null,
+    "root": "/home/zsc/cc-project/ssl/SoftTeacher",
+    "host": "zsc-PowerEdge-T630",
+    "username": "zsc",
+    "executable": "/home/zsc/miniconda3/envs/ssl/bin/python"
+}

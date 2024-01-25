@@ -1,0 +1,137 @@
+python scripts/SAM_Policy_Vis-B.py --checkpoint ./checkpoints/sam_vit_b_01ec64.pth --model_type vit_b --output ./IMGs/test.jpg
+
+python scripts/SAM_Policy_Vis-H.py --checkpoint ./checkpoints/sam_vit_h_4b8939.pth --model_type vit_h --output ./IMGs/test.jpg
+bash tools/dist_train_partially_b.sh baseline 1 10 4
+
+bash tools/dist_train_partially_knet.sh baseline 1 10 4
+
+bash tools/dist_train_partially_weight.sh semi 1 10 4
+
+bash tools/dist_train_partially_weight_multi_iou.sh semi 1 10 4
+
+bash tools/dist_train_partially_weight.sh semi 1 10 4
+
+bash tools/dist_train_partially_weight_1.sh semi 1 10 4
+
+bash tools/dist_train_partially_weight_soft.sh semi 1 10 8
+
+#jupyter安装内核
+python -m ipykernel install --user --name pixel --display-name "pixel"
+
+bash tools/dist_train_partially_2.sh semi 1 10 4
+
+bash tools/dist_train_partially_1.sh semi 1 5 4
+
+
+ps -aux|grep "ssl/bin/python -u"|awk '{print "kill -9 "$2}'|sh
+
+ps -aux|grep "ssl/bin/python -c"|awk '{print "kill -9 "$2}'|sh
+
+ps -aux|grep "ssl"
+
+
+ps -aux|grep "piexl/bin/python -u"|awk '{print "kill -9 "$2}'|sh
+
+ps -aux|grep "piexl/bin/python -c"|awk '{print "kill -9 "$2}'|sh
+
+ps -aux|grep "piexl"
+
+
+bash tools/dist_train_partially_weight.sh semi 1 10 4
+
+
+#注意
+base_score 这边的knet改成了原版的knet，后续还需要改回去（knet_head,knet_update,base,）
+
+
+消融命令
+bash tools/dist_train_partially_weight_1.sh semi 1 10 4
+
+bash tools/dist_train_partially_weight_bg.sh semi 1 10 4
+
+
+#ssl mask
+bash tools/dist_train_partially_weight_soft.sh semi 1 1 4
+
+bash tools/dist_train_partially_weight_1.sh semi 1 1 4
+
+
+#测试指定批量图片
+
+bash tools/dist_test_1.sh configs/ssl_knet/ssl_count.py work_dirs/ssl/weight_3/iter_64000.pth 4 --eval segm
+
+bash tools/dist_test_1.sh configs/ssl_knet/ssl_count.py work_dirs/ssl/weight_3/iter_32000.pth 4 --eval segm
+
+
+bash tools/dist_test_1.sh configs/ssl_knet/ssl_count.py work_dirs/ssl/weight_3_new_weight_1/iter_160000.pth 4 --eval segm
+
+bash tools/dist_test_1.sh configs/ssl_knet/ssl_count.py work_dirs/ssl/weight_3_new_weight_1_t2/iter_220000.pth 4 --eval segm
+
+
+bash tools/dist_test_1.sh configs/ssl_knet/ssl_count.py work_dirs/ssl/baseline_3/iter_32000.pth 4 --eval segm
+
+bash tools/dist_test_1.sh configs/ssl_knet/ssl_count.py work_dirs/ssl_percent/10/baseline_3_220k/iter_120000.pth 4 --eval segm
+
+bash tools/dist_test_1.sh configs/mask_rcnn/ssl_mask_count.py work_dirs/ssl_mask_rcnn/10/1_3_0.5_0.8_0.8/iter_120000.pth 4 --eval segm
+
+bash tools/dist_test_1.sh configs/mask_rcnn/ssl_mask_count.py work_dirs/ssl_mask_rcnn/10/1_3_0.4_0.7_0.7/iter_48750.pth 4 --eval segm
+
+bash tools/dist_test_1.sh configs/mask_rcnn/mask_count.py work_dirs/mask_rcnn/iter_180000.pth 4 --eval segm
+
+bash tools/dist_test_1.sh configs/k-net/knet_count_1.py work_dirs/knet/10/iter_64000.pth 4 --eval segm
+
+
+#传文件
+scp -P 233 ./work_dirs/ssl_mask_rcnn/100/2_2_baseline_560k/iter_360000.pth  hujie@10.24.82.143:/media/sdb/hujie-project/SoftTeacher/work_dirs/ssl_mask_rcnn/100/
+
+scp -P 6666 ./data/coco/annotations/semi_supervised/instances_train2017.1@10-unlabeled.json  xxxy@10.24.82.88:/home/xxxy/yh/interformer-catl/data/coco/annotations/semi_supervised
+
+
+scp -P 233 ./data/coco/annotations/semi_supervised/panoptic_train2017.1@10-unlabeled.json hujie@10.24.82.143:/media/sdb/hujie-project/SoftTeacher/data/coco/annotations/semi_supervised
+
+scp -P 233 ./data/coco/annotations/semi_supervised/panoptic_train2017.1@10.json hujie@10.24.82.143:/media/sdb/hujie-project/SoftTeacher/data/coco/annotations/semi_supervised
+
+scp -P 233 ./data/coco/annotations/panoptic_train2017.json hujie@10.24.82.143:/media/sdb/hujie-project/SoftTeacher/data/coco/annotations
+
+scp -P 233 ./work_dirs/knet_pa/10/iter_8000.pth hujie@10.24.82.143:/media/sdb/hujie-project/SoftTeacher/work_dirs/knet_pa
+
+scp  -P 7799  ./work_dirs/knet_pa/10/iter_8000.pth zsc@10.24.82.73:/home/zsc/cc-project/ssl/SoftTeacher/work_dirs/knet_pa/10
+
+
+scp  -P 7799  work_dirs/ssl/mayue_test_ssl_f2_testV2/iter_8000.pth zsc@10.24.82.73:/home/zsc/cc-project/ssl/SoftTeacher/work_dirs/ssl/mayue_test_ssl_f2_testV2/
+
+scp  -P 7799  ./work_dirs/ssl_mask_rcnn/10/1_3_0.4_0.7_0.7/latest.pth zsc@10.24.82.73:/home/zsc/cc-project/ssl/SoftTeacher/work_dirs/ssl_mask_rcnn/iou_180k/
+
+scp -P 233 ./work_dirs/ssl_mask_rcnn/10/1_3_0.4_0.7_0.7/latest.pth  hujie@10.24.82.143:/media/sdb/hujie-project/SoftTeacher/work_dirs/ssl_mask_rcnn/10/test_pth/
+
+scp -P 233 ./work_dirs/ssl/mayue_test_ssl_f2_NMSV2/iter_216000.pth  hujie@10.24.82.143:/media/sdb/hujie-project/SoftTeacher/work_dirs/ssl/11_pth/knet_fusion_323/
+
+scp -P 233 ./work_dirs/ssl/mayue_test_ssl_f2_NMSV2/iter_216000.pth  hujie@10.24.82.143:/media/sdb/hujie-project/SoftTeacher/work_dirs/ssl/11_pth/knet_fusion_323/
+
+scp  -P 233  ./data/cityscapes.zip hujie@10.24.82.143:/media/sdb/hujie-project/SoftTeacher/data/cityscapes/
+
+scp  -P 233  work_dirs/ssl_knet_cityscapes/baseline/30_2048_1024/iter_53000.pth hujie@10.24.82.143:/media/sdb/hujie-project/SoftTeacher/11to73/
+
+scp  -P 7799  work_dirs/ssl_fusion/full/iter_870000.pth zsc@10.24.82.73:/home/zsc/cc-project/ssl/SoftTeacher/work_dirs/ssl/vis_imgs/
+
+
+#下载cityscapes
+wget --keep-session-cookies --save-cookies=cookies.txt --post-data 'username=ccdates&password=22v#RUb*CNhpQg2&submit=Login' https://www.cityscapes-dataset.com/login/
+
+wget --load-cookies cookies.txt --content-disposition https://www.cityscapes-dataset.com/file-handling/?packageID=1
+
+
+cityscapes2coco
+python ./thirdparty/mmdetection/tools/dataset_converters/cityscapes.py ./data/cityscapes --nproc 8 --out-dir ./data/cityscapes/annotations
+
+安装albumentations（数据增强工具库）
+pip install -U albumentations --no-binary qudida,albumentations
+
+#划分训练集
+python tools/dataset/cityscapes/prepare_cityscape_data.py --percent 5 --seed 1
+
+python tools/dataset/semi_coco.py --percent 10 --seed 1 --data-dir data/coco/annotations --seed-offset 1
+
+python tools/dataset/semi_coco.py --data-dir data/coco/annotations  --percent 5
+
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nnodes 1 --nproc_per_node 4 train.py --config ./configs/cod-sam-vit-b.yaml

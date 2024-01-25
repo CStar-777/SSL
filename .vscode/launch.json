@@ -1,0 +1,26 @@
+//SSL_knet
+{
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "~/anaconda3/envs/ssl/lib/python3.8/site-packages/torch/distributed/launch.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--nproc_per_node=1",
+                "--master_port=20512",
+                "tools/train.py",
+                "configs/ssl_knet/ssl_knet_weight_cp.py",
+                "--launcher",
+                "pytorch",
+                "--cfg-options",
+                "fold=1",
+                "percent=10",
+                "--gpus",
+                "1"
+            ]
+        }
+    ]
+}

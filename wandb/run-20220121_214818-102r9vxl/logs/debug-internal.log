@@ -1,0 +1,52 @@
+2022-01-21 21:48:19,051 INFO    MainThread:1981 [internal.py:wandb_internal():91] W&B internal server running at pid: 1981, started at: 2022-01-21 21:48:19.051407
+2022-01-21 21:48:19,054 INFO    WriterThread:1981 [datastore.py:open_for_write():77] open: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/run-102r9vxl.wandb
+2022-01-21 21:48:19,056 DEBUG   HandlerThread:1981 [handler.py:handle_request():124] handle_request: check_version
+2022-01-21 21:48:19,059 DEBUG   SenderThread:1981 [sender.py:send():179] send: header
+2022-01-21 21:48:19,059 DEBUG   SenderThread:1981 [sender.py:send_request():193] send_request: check_version
+2022-01-21 21:48:19,477 DEBUG   SenderThread:1981 [sender.py:send():179] send: run
+2022-01-21 21:48:20,024 INFO    SenderThread:1981 [dir_watcher.py:__init__():168] watching files in: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files
+2022-01-21 21:48:20,024 INFO    SenderThread:1981 [sender.py:_start_run_threads():707] run started: 102r9vxl with start time 1642772898
+2022-01-21 21:48:20,024 DEBUG   SenderThread:1981 [sender.py:send():179] send: summary
+2022-01-21 21:48:20,025 INFO    SenderThread:1981 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2022-01-21 21:48:20,028 DEBUG   HandlerThread:1981 [handler.py:handle_request():124] handle_request: run_start
+2022-01-21 21:48:20,037 DEBUG   HandlerThread:1981 [meta.py:__init__():39] meta init
+2022-01-21 21:48:20,037 DEBUG   HandlerThread:1981 [meta.py:__init__():53] meta init done
+2022-01-21 21:48:20,037 DEBUG   HandlerThread:1981 [meta.py:probe():210] probe
+2022-01-21 21:48:20,044 DEBUG   HandlerThread:1981 [meta.py:_setup_git():200] setup git
+2022-01-21 21:48:20,060 DEBUG   HandlerThread:1981 [meta.py:_setup_git():207] setup git done
+2022-01-21 21:48:20,060 DEBUG   HandlerThread:1981 [meta.py:_save_pip():57] save pip
+2022-01-21 21:48:20,061 DEBUG   HandlerThread:1981 [meta.py:_save_pip():71] save pip done
+2022-01-21 21:48:20,061 DEBUG   HandlerThread:1981 [meta.py:_save_conda():78] save conda
+2022-01-21 21:48:21,030 INFO    Thread-8  :1981 [dir_watcher.py:_on_file_created():216] file/dir created: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/wandb-summary.json
+2022-01-21 21:48:21,031 INFO    Thread-8  :1981 [dir_watcher.py:_on_file_created():216] file/dir created: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/conda-environment.yaml
+2022-01-21 21:48:21,031 INFO    Thread-8  :1981 [dir_watcher.py:_on_file_created():216] file/dir created: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/requirements.txt
+2022-01-21 21:48:23,571 DEBUG   HandlerThread:1981 [meta.py:_save_conda():86] save conda done
+2022-01-21 21:48:23,572 DEBUG   HandlerThread:1981 [meta.py:probe():252] probe done
+2022-01-21 21:48:23,586 DEBUG   SenderThread:1981 [sender.py:send():179] send: files
+2022-01-21 21:48:23,587 INFO    SenderThread:1981 [sender.py:_save_file():829] saving file wandb-metadata.json with policy now
+2022-01-21 21:48:23,600 DEBUG   HandlerThread:1981 [handler.py:handle_request():124] handle_request: stop_status
+2022-01-21 21:48:23,601 DEBUG   SenderThread:1981 [sender.py:send_request():193] send_request: stop_status
+2022-01-21 21:48:24,264 INFO    Thread-8  :1981 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/conda-environment.yaml
+2022-01-21 21:48:24,265 INFO    Thread-8  :1981 [dir_watcher.py:_on_file_created():216] file/dir created: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/output.log
+2022-01-21 21:48:24,265 INFO    Thread-8  :1981 [dir_watcher.py:_on_file_created():216] file/dir created: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/wandb-metadata.json
+2022-01-21 21:48:24,600 INFO    Thread-11 :1981 [upload_job.py:push():133] Uploaded file /tmp/tmp2d2m9mpzwandb/21rf5pu5-wandb-metadata.json
+2022-01-21 21:48:28,250 WARNING MainThread:1981 [internal.py:is_dead():367] Internal process exiting, parent pid 1641 disappeared
+2022-01-21 21:48:28,251 ERROR   MainThread:1981 [internal.py:wandb_internal():143] Internal process shutdown.
+2022-01-21 21:48:28,588 INFO    WriterThread:1981 [datastore.py:close():258] close: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/run-102r9vxl.wandb
+2022-01-21 21:48:28,612 INFO    HandlerThread:1981 [handler.py:finish():638] shutting down handler
+2022-01-21 21:48:28,908 INFO    SenderThread:1981 [sender.py:finish():933] shutting down sender
+2022-01-21 21:48:28,908 INFO    SenderThread:1981 [dir_watcher.py:finish():282] shutting down directory watcher
+2022-01-21 21:48:29,267 INFO    SenderThread:1981 [dir_watcher.py:finish():312] scan: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files
+2022-01-21 21:48:29,268 INFO    SenderThread:1981 [dir_watcher.py:finish():318] scan save: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/wandb-summary.json wandb-summary.json
+2022-01-21 21:48:29,268 INFO    SenderThread:1981 [dir_watcher.py:finish():318] scan save: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/config.yaml config.yaml
+2022-01-21 21:48:29,269 INFO    SenderThread:1981 [dir_watcher.py:finish():318] scan save: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/wandb-metadata.json wandb-metadata.json
+2022-01-21 21:48:29,269 INFO    SenderThread:1981 [dir_watcher.py:finish():318] scan save: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/requirements.txt requirements.txt
+2022-01-21 21:48:29,275 INFO    SenderThread:1981 [dir_watcher.py:finish():318] scan save: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/output.log output.log
+2022-01-21 21:48:29,276 INFO    SenderThread:1981 [dir_watcher.py:finish():318] scan save: /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/conda-environment.yaml conda-environment.yaml
+2022-01-21 21:48:29,282 INFO    SenderThread:1981 [file_pusher.py:finish():176] shutting down file pusher
+2022-01-21 21:48:29,283 INFO    SenderThread:1981 [file_pusher.py:join():181] waiting for file pusher
+2022-01-21 21:48:30,189 INFO    Thread-14 :1981 [upload_job.py:push():133] Uploaded file /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/requirements.txt
+2022-01-21 21:48:30,224 INFO    Thread-13 :1981 [upload_job.py:push():133] Uploaded file /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/config.yaml
+2022-01-21 21:48:30,250 INFO    Thread-12 :1981 [upload_job.py:push():133] Uploaded file /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/wandb-summary.json
+2022-01-21 21:48:30,404 INFO    Thread-15 :1981 [upload_job.py:push():133] Uploaded file /home/zsc/cc-project/ssl/SoftTeacher/wandb/run-20220121_214818-102r9vxl/files/conda-environment.yaml
+2022-01-21 21:48:31,004 INFO    MainThread:1981 [internal.py:handle_exit():78] Internal process exited
