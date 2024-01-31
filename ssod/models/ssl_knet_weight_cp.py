@@ -222,7 +222,7 @@ class SslKnet_weight_cp(MultiSteamDetector):
                 pad_wh = (0, pad_W - gt_mask.width, 0, pad_H - gt_mask.height)
                 mask_tensor = F.pad(mask_tensor, pad_wh, value=0)
 
-            # 二值化
+            # Binarization
             mask_tensor = mask_tensor > 0.5
             mask_tensor = mask_tensor.float()
 
@@ -274,7 +274,7 @@ class SslKnet_weight_cp(MultiSteamDetector):
         iou_loss = losses["s2_loss_iou"]
         losses["s2_loss_iou"] = iou_loss * 0
 
-        # 对dice loss，mask loss， focal loss加权
+        # weight dice loss，mask loss，and focal loss
 
         losses.update(rpn_losses)
         return losses
@@ -284,7 +284,7 @@ class SslKnet_weight_cp(MultiSteamDetector):
         bboxes = Transform2D.transform_bboxes(bboxes, trans_mat, max_shape)
         return bboxes
 
-    # ！加一个函数，类似于_transform_bbox，用于mask的变换
+    # add function，like _transform_bbox，using to transform mask
     # @force_fp32(apply_to=["masks", "trans_mat"])
     def _transform_mask(self, masks, trans_mat, max_shape):
         masks = Transform2D.transform_masks(masks, trans_mat, max_shape)
@@ -295,7 +295,6 @@ class SslKnet_weight_cp(MultiSteamDetector):
         return [bt @ at.inverse() for bt, at in zip(b, a)]
 
     # cx add
-    # 使用动态阈值：混合高斯函数，来自ConsistentTeacher中的GMM模块
     def gmm_policy(self, scores, given_gt_thr=0.5, policy="high"):
         """The policy of choosing pseudo label.
 
@@ -349,55 +348,16 @@ class SslKnet_weight_cp(MultiSteamDetector):
 
         return pos_thr
 
-    def class_thr(self, score_list, label_list):
-        # self.ulb_dset_len -= 1
-
-        # print(self.ulb_dset_len)
-
-        if score_list[0].shape == torch.Size([0]):
-            return
-
-        score_list = score_list[0].detach().cpu().tolist()
-        label_list = label_list[0].detach().cpu().tolist()
-        # score_list = score_list[0]
-
-        # dist.all_reduce(self.sel_cnt)
-        # print(self.sel_cnt)
-
-        for i in range(0, len(score_list)):
-            if score_list[i] > 0.6:
-                self.sel_cnt[label_list[i]] += 1
-                print("次数统计为:", self.sel_cnt)
-
-        # interval = 1000
-        # flag = isVisualbyCount(interval)
-        # if flag == 1:
-        #     print("次数统计为:", self.sel_cnt)
-
-        # if self.sel_cnt.min() == 0:
-        #     return
-
-        pseudo_couter = Counter(self.sel_cnt.tolist())
-        if pseudo_couter[0] > 2:
-            return
-
-        max_class = max(self.sel_cnt.tolist())
-
-        for i in range(self.num_classes):
-            self.class_acc[i] = self.sel_cnt[i] / max_class
-        self.class_acc = [round(x, 2) for x in self.class_acc]
-
-    # 修改
+    # modify
     def extract_teacher_info(self, img, img_metas, proposals=None, **kwargs):
         teacher_info = {}
         feat = self.teacher.extract_feat(img)
         teacher_info["backbone_feature"] = feat
-        # 不需要保存teacher的proposal
+        # don't need save teacher's proposal
 
         rpn_outs = self.teacher.rpn_head.simple_test_rpn(feat, img_metas)
         (proposal_feats, x_feats, mask_preds, cls_scores, seg_preds) = rpn_outs
 
-        # teacher_test定义位置：ssod/knet/det/kernel_iter_head.py
         (
             seg_results,
             label_results,
@@ -411,9 +371,8 @@ class SslKnet_weight_cp(MultiSteamDetector):
         labels = torch.cat([torch.stack(label_results)])
         thrs = torch.zeros_like(scores)
 
-        if isinstance(
-            self.train_cfg.pseudo_label_initial_score_thr, float
-        ):  # 过滤阈值去除分值比较低的检测框和类别
+        if isinstance(self.train_cfg.pseudo_label_initial_score_thr, float):  
+            # Filter threshold to remove lower scores detection boxes and categories
             thr = self.train_cfg.pseudo_label_initial_score_thr
         else:
             # TODO: use dynamic threshold
@@ -432,22 +391,23 @@ class SslKnet_weight_cp(MultiSteamDetector):
                     policy=self.train_cfg.get("policy", "high"),
                 )
                 thrs[labels == label] = thr
-            mean_thr = thrs.mean()
-            # mean_thr = thrs.mean() * 2  # 乘2，阈值过小
+                self.classes_thr[label] = thr
+            # mean_thr = thrs.mean()
+            mean_thr = thrs.mean() * 1.6
             if len(thrs) == 0:
                 mean_thr.fill_(0)
             mean_thr = float(mean_thr)
             log_every_n({"gmm_thr": mean_thr})
             teacher_info["gmm_thr"] = mean_thr
 
-        if isinstance(self.train_cfg.pseudo_label_iou_thr, float):  # 过滤阈值去除分值比较低的检测框和类别
+        if isinstance(self.train_cfg.pseudo_label_iou_thr, float):  # Filter
             iou_thr = self.train_cfg.pseudo_label_iou_thr
         else:
             # TODO: use dynamic threshold
             raise NotImplementedError("Dynamic Threshold is not implemented yet.")
 
         # list(zip(*list)),将数组中的元组中的每一项取出,添加到一起,组成新的数组
-        # 两种过滤方式。带iou的和不带iou的
+        # two way to filter: with iou or without iou
         det_masks, det_labels, det_scores, det_ious = list(  # zip(*list) 拆分重组
             zip(
                 *[
@@ -475,13 +435,6 @@ class SslKnet_weight_cp(MultiSteamDetector):
             for meta in img_metas
         ]
         teacher_info["img_metas"] = img_metas
-        self.class_thr(det_scores, det_labels)
-        teacher_info["class_acc"] = self.class_acc
-
-        interval = 1000
-        flag = isVisualbyCount(interval)
-        if flag == 1:
-            print("类准确度为:", self.class_acc)
 
         return teacher_info
 
