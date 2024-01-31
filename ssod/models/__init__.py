@@ -18,6 +18,5 @@ from .ssl_knet_weight_lm import SslKnet_weight_lm
 from .ssl_knet_weight_cs import SslKnet_weight_cs
 from .ssl_knet_weight_three_steps_cs import SslKnet_weight_three_steps_cs
 from .ssl_knet_weight_gmm import SslKnet_weight_gmm
-
-# from .ssl_knet_weight_cp import SslKnet_weight_cp
+from .ssl_knet_weight_cp import SslKnet_weight_cp
 from .ssl_knet_weight_class_cp import SslKnet_weight_class_cp

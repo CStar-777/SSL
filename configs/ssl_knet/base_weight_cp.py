@@ -232,7 +232,7 @@ data = dict(  # 具体的数据集配置放在ssl_knet_weight_cp.py中
     sampler=dict(
         train=dict(
             type="SemiBalanceSampler",
-            sample_ratio=[1, 2],
+            sample_ratio=[1, 4],
             by_prob=True,
             # at_least_one=True,
             epoch_length=7330,
@@ -246,8 +246,8 @@ semi_wrapper = dict(
     model="${model}",
     train_cfg=dict(
         use_teacher_proposal=False,
-        pseudo_label_initial_score_thr=0.35,
-        # pseudo_label_initial_score_thr=None,
+        # pseudo_label_initial_score_thr=0.35,
+        pseudo_label_initial_score_thr=None,
         pseudo_label_iou_thr=0.5,
         min_pseduo_box_size=0,
         unsup_weight=1,
@@ -267,7 +267,7 @@ custom_hooks = [
     dict(type="MeanTeacher", momentum=0.999, interval=1, warm_up=0),
 ]
 
-evaluation = dict(type="SubModulesDistEvalHook", interval=10000)
+evaluation = dict(type="SubModulesDistEvalHook", interval=8000)
 
 lr_config = dict(
     policy="step",

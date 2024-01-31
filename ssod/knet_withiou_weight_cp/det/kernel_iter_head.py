@@ -10,7 +10,6 @@ from .mask_pseudo_sampler import MaskPseudoSampler
 from mmdet.core.mask.structures import BitmapMasks
 from mmcv.runner import force_fp32, auto_fp16
 
-from ssod.datasets.pipelines.transforms import CopyPaste_v2  # cx add
 from .utils import *  # cx add
 
 
@@ -335,7 +334,8 @@ class KernelIterHead(BaseRoIHead):
                 scores_per_img, topk_indices = cls_score_per_img.flatten(0, 1).topk(
                     self.test_cfg.max_per_img, sorted=True
                 )
-                mask_indices = topk_indices // num_classes
+                # mask_indices = topk_indices // num_classes
+                mask_indices = torch.div(topk_indices, num_classes, rounding_mode='trunc')
                 labels_per_img = topk_indices % num_classes
                 masks_per_img = scaled_mask_preds[img_id][mask_indices]
                 iou_per_img = iou_scores_per_img.flatten(0)[mask_indices]
@@ -423,7 +423,8 @@ class KernelIterHead(BaseRoIHead):
                     self.test_cfg.max_per_img, sorted=True
                 )  # max_per_img = 100, flatten从起始维度到目标维度推平， topk,默认维度1，即[]中取top, 返回值和索引
 
-                mask_indices = topk_indices // num_classes  # 会有同一个kernel产生的结果，但是是不同的类别
+                # mask_indices = topk_indices // num_classes  # 会有同一个kernel产生的结果，但是是不同的类别
+                mask_indices = torch.div(topk_indices, num_classes, rounding_mode='trunc')
 
                 labels_per_img = topk_indices % num_classes
 
@@ -444,44 +445,8 @@ class KernelIterHead(BaseRoIHead):
                 results.append(bitmask)
         return results, label_list, score_list, iou_list
 
-    # cx add
-    def copyPaste_test(self, img, img_metas, teacher_info):
-        """
-        根据teacher_info进行操作
-        对score和iou满足条件的区域，进行copy paste操作
-        生成的新图像，存放至：out文件夹中
-        作为下一个epoch的unsup训练数据，计算Loss
-        """
-        det_masks = teacher_info["det_masks"]
-        det_labels = teacher_info["det_labels"]
-        det_scores = teacher_info["det_scores"]
-        det_ious = teacher_info["det_ious"]
-
-        num_imgs = len(img_metas)
-
-        pre_masks = det_masks
-        pre_labels = det_labels
-        pre_scores = det_scores
-        pre_ious = det_ious
-
-        for i in range(num_imgs):  # 1或2（应该是一次处理的图像数量，但不清楚为什么数量会变化
-            num = pre_labels[i].data.cpu().numpy().shape[0]  # 每张图片中的伪标签数量
-            if num != 0:
-                for j in range(
-                    num
-                ):  # 逐个处理图片中的伪标签，假定超参(后面尝试根据类动态阈值设定)：score<0.8, iou<0.7
-                    if 0.5 < pre_scores[i][j].item() < 0.8:  # 类别不可信时
-                        img, teacher_info = copy_paste_test_2(i, j, img, teacher_info)
-                        break
-                    elif (
-                        pre_scores[i][j].item() > 0.8 and pre_ious[i][j].item() < 0.7
-                    ):  # 类别可信，但iou过低时
-                        img, teacher_info = copy_paste_test_2(i, j, img, teacher_info)
-                        break
-        return img, teacher_info
-
     # img, teacher_info, pseudo_masks = self.teacher.roi_head.copyPaste_test_2(img,  img_metas, teacher_info, pseudo_masks)
-    def copyPaste_test_2(self, img, img_metas, teacher_info, pseudo_masks):
+    def copyPaste_test(self, img, img_metas, teacher_info, pseudo_masks, classes_thr):
         """
         根据teacher_info进行操作
         对score和iou满足条件的区域，进行copy paste操作
@@ -499,24 +464,29 @@ class KernelIterHead(BaseRoIHead):
         pre_labels = det_labels
         pre_scores = det_scores
         pre_ious = det_ious
+        
+        thrs = classes_thr
 
         # cp_start = time.time()
-        for i in range(num_imgs):  # 1或2（应该是一次处理的图像数量，但不清楚为什么数量会变化
+        for i in range(num_imgs):  # 1或2
             num = pre_labels[i].data.cpu().numpy().shape[0]  # 每张图片中的伪标签数量
             if num != 0:
-                for j in range(
-                    num
-                ):  # 逐个处理图片中的伪标签，假定超参(后面尝试根据类动态阈值设定)：score<0.8, iou<0.7
+                for j in range(num):  
+                    label = int(pre_labels[i][j])
+                    label_thr = thrs[label] * 3
+                    # 逐个处理图片中的伪标签
+                    if label_thr > 0.8:
+                        continue
                     if 0.5 < pre_scores[i][j].item() < 0.8:  # 类别不可信时
-                        img, teacher_info, det_masks = copy_paste_test_3(
-                            i, j, img, teacher_info, det_masks, 1
+                        img, teacher_info, det_masks = copy_paste(
+                            i, j, img, teacher_info, det_masks, thrs, 1
                         )
                         break
                     elif (
                         pre_scores[i][j].item() > 0.8 and pre_ious[i][j].item() < 0.7
                     ):  # 类别可信，但iou过低时
-                        img, teacher_info, det_masks = copy_paste_test_3(
-                            i, j, img, teacher_info, det_masks, 2
+                        img, teacher_info, det_masks = copy_paste(
+                            i, j, img, teacher_info, det_masks, thrs, 2
                         )
                         break
         # cp_end = time.time() - cp_start
