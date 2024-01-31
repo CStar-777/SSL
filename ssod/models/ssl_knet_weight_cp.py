@@ -12,16 +12,13 @@ from ssod.utils import (
     log_image_with_masks_without_box,
     isVisualbyCount,
 )
-from mmdet.datasets.coco import *
 
 from .multi_stream_detector import MultiSteamDetector
 from .utils import Transform2D, filter_invalid_3
-from mmdet.core.mask.structures import BitmapMasks
 import torch.nn.functional as F
 import time
 import matplotlib as mpl
 from collections import Counter
-import torch.distributed as dist
 
 mpl.use("Agg")
 
